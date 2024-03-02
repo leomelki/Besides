@@ -1,31 +1,31 @@
+import Game from "../../Game"
+import Player from "../../player/Player"
+import Canvas from "../../utils/Canvas"
 import World from "../World"
-import { Application } from 'pixi.js'
+import FloorElement from "../elements/FloorElement"
 
 export default class Level1 extends World {
-    constructor(app: Application) {
-        super(app)
+
+    get name() {
+        return "Level 1"
     }
 
-    initElements() {
+    constructor(game: Game) {
+        super(game)
+    }
 
+    init() {
+        this.elements.push(new FloorElement(this))
     }
 
     tick() {
-    }
-
-    draw() {
     }
 
     isFinished() {
         return false
     }
 
-    isSolid(x: number, y: number) {
-        return true
-    }
-
-    getPlayerToPlay(x: number, y: number): 1 | 2 {
+    getPlayerToPlay(player: Player): 1 | 2 {
         return 1
     }
-
 }

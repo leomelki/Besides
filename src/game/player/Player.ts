@@ -1,12 +1,14 @@
 import { DefaultInput } from "netplayjs"
 import World from "../world/World"
+import AABB from "../utils/AABB"
+import Canvas from "../utils/Canvas"
 
 export default class Player {
     lastX: number = 0
     lastY: number = 0
 
-    x: number = 0
-    y: number = 0
+    x: number = 5
+    y: number = 10
 
     motionX: number = 0
     motionY: number = 0
@@ -16,10 +18,16 @@ export default class Player {
     constructor(
         protected world: World,
     ) { }
+
+    draw(canvas: Canvas) {
+        canvas.ctx.fillStyle = "red"
+        canvas.ctx.fillRect(...canvas.convertBoth(this.x - .3, this.y, .6, 1.8))
+    }
     
     tick(control: DefaultInput) {
         const vel = control.arrowKeys()
         
+        this.tickPosition(vel.x, vel.y)
     }
 
 	/**
@@ -77,30 +85,65 @@ export default class Player {
             this.onGround = false
         }
     }
+	readonly aaCollisionBox = new AABB(-.3, 0, .6, 1.8);
     
 	private move(x: number, y: number) {
-        //TODO check collision
-        if(this.world.isSolid(this.x + x, this.y)) {
-            x = 0
-            this.motionX = 0
-        }
-        if(this.world.isSolid(this.x, this.y + y)) {
-            y = 0
-            this.motionY = 0
-        }
+		let prevX = x, prevY = y;
 
-        //in case of perfect diagonal
-        if(this.world.isSolid(this.x + x, this.y + y)) {
-            x = 0
-            y = 0
-            this.motionX = 0
-            this.motionY = 0
-        }
-        
+        let newRealCooBox = new AABB(this.x - .3, this.y, .6, 1.8).move(x, y);
+        let list1 = this.world.getCollisionBoxes(newRealCooBox);
+        for (let collisionBox of list1)
+            collisionBox.offset(-this.x, -this.y);
+
+        let box = this.aaCollisionBox.copy();
+
+        for (let collisionBox of list1)
+            y = collisionBox.computeOffsetY(box, y);
+
+        box.offset(0, y);
+
+        for(let collisionBox of list1)
+            x = collisionBox.computeOffsetX(box, x);
+
+        box.offset(x, 0);
+
+        if (y != prevY)
+            this.motionY = 0;
+
+        if (x != prevX)
+            this.motionX = 0;
 
 		this.x += x;
 		this.y += y;
 
-        this.onGround = this.world.isSolid(this.x, this.y - 0.05)
+		let finishedFalling = prevY !== y && prevY < 0;
+
+		if (finishedFalling) {
+			this.motionY = 0;
+			this.onGround = true;
+		} else if(prevY != 0)
+			this.onGround = false;
+    }
+
+    serialize(): any {  
+        return {
+            lastX: this.lastX,
+            lastY: this.lastY,
+            x: this.x,
+            y: this.y,
+            motionX: this.motionX,
+            motionY: this.motionY,
+            onGround: this.onGround
+        }
+    }
+
+    deserialize(json: any) {
+        this.lastX = json.lastX
+        this.lastY = json.lastY
+        this.x = json.x
+        this.y = json.y
+        this.motionX = json.motionX
+        this.motionY = json.motionY
+        this.onGround = json.onGround
     }
 }

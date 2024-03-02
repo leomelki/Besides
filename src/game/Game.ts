@@ -1,49 +1,59 @@
-import {NetplayPlayer, DefaultInput, Game as NJSGame} from 'netplayjs'
+import { DefaultInput, JsonObject, Game as NJSGame, NetplayPlayer } from 'netplayjs'
 
-import { Application } from 'pixi.js'
+import Player from './player/Player'
+import Canvas from './utils/Canvas'
+import Level1 from './world/levels/Level1'
 
 export default class Game extends NJSGame {
 
-    app = new Application()
-
-    static timestep = 1000 / 60
-
+    static timestep = 1000 / 20
     static canvasSize = { width: 600, height: 300 }
+    
+    private _partialTick: number = 0
+    get partialTick() {
+        return this._partialTick
+    }
 
-    aPos: { x: number, y: number }
-    bPos: { x: number, y: number }
+    canvas = new Canvas(undefined!, undefined!, 60, 30)
+
+    world = new Level1(this)
+    player = new Player(this.world)
 
     constructor() {
         super()
-        this.aPos = { x: 100, y: 150 }
-        this.bPos = { x: 500, y: 150 }
+        this.world.init()
     }
 
     tick(playerInputs: Map<NetplayPlayer, DefaultInput>) {
-        for (const [player, input] of playerInputs.entries()) {
-            const vel = input.arrowKeys()
-
-            console.log(vel)
-
-            if (player.getID() == 0) {
-                this.aPos.x += vel.x * 5
-                this.aPos.y -= vel.y * 5
-            } else if (player.getID() == 1) {
-                this.bPos.x += vel.x * 5
-                this.bPos.y -= vel.y * 5
-            }
-        }
+        for (const [player, input] of playerInputs.entries())
+            if(this.world.getPlayerToPlay(this.player) === player.getID())
+                this.player.tick(input)
     }
 
     draw(canvas: HTMLCanvasElement) {
         const ctx = canvas.getContext("2d")!
+        this.canvas.updateCanvas(canvas, ctx)
 
-        ctx.fillStyle = "gray"
+        ctx.fillStyle = "white"
         ctx.fillRect(0, 0, canvas.width, canvas.height)
+        
+        this.world.draw(this.canvas)
+        this.player.draw(this.canvas)
+    }
 
-        ctx.fillStyle = "red"
-        ctx.fillRect(this.aPos.x - 5, this.aPos.y - 5, 10, 10)
-        ctx.fillStyle = "blue"
-        ctx.fillRect(this.bPos.x - 5, this.bPos.y - 5, 10, 10)
+    serialize() {
+        return {
+            world: this.world.serialize(),
+            player: this.player.serialize()
+        }
+    }
+
+    deserialize(value: any) {
+        if(this.world.name == value.world.name)
+            this.world.deserialize(value.world)
+        else
+            console.log("World name mismatch")
+        
+        this.player.deserialize(value.player)
     }
 }

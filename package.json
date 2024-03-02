@@ -12,7 +12,6 @@
   "dependencies": {
     "autoprefixer": "^10.4.18",
     "netplayjs": "^0.4.1",
-    "pixi.js": "^7.4.0",
     "postcss": "^8.4.35",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
