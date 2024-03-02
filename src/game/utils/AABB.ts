@@ -1,6 +1,12 @@
 import FloatUtils from "./FloatUtils"
 
 export default class AABB {
+    static EMPTY: AABB = new AABB(-100, -100, 0, 0)
+
+    static from(aabb: any): AABB {
+        return new AABB(aabb.x, aabb.y, aabb.width, aabb.height)
+    }
+
     constructor(
         public x: number,
         public y: number,
@@ -72,5 +78,15 @@ export default class AABB {
     offset(x: number, y: number) {
         this.x += x
         this.y += y
+        return this
+    }
+
+    serialize() {
+        return {
+            x: this.x,
+            y: this.y,
+            width: this.width,
+            height: this.height
+        }
     }
 }

@@ -2,13 +2,18 @@ import Game from '../Game';
 import Player from '../player/Player';
 import AABB from '../utils/AABB';
 import Canvas from '../utils/Canvas';
+import BrokenPlatformElement from './elements/BrokenPlatformElement';
 import Element from './elements/Element';
 import FloorElement from './elements/FloorElement';
+import MovingKillPlatformElement from './elements/MovingKillPlatformElement';
+import MovingPlatformElement from './elements/MovingPlatformElement';
+import PlatformElement from './elements/PlatformElement';
+import VerticalWallElement from './elements/VerticalWallElement';
 
 export default abstract class World {
     elements: Element[] = []
     constructor(
-        protected game: Game,
+        public game: Game,
         public height: number = 30,
         public width: number = 60,
     ) { }
@@ -33,7 +38,10 @@ export default abstract class World {
     /**
      * Called every frame
      */
-    tick() { }
+    tick() {
+        for (const element of this.elements)
+            element.tick()
+    }
 
     /**
      * @returns Whether the player reached the end of the level
@@ -65,7 +73,17 @@ export default abstract class World {
         this.elements = json.elements.map((e: any) => {
             switch (e.type) {
                 case 'FloorElement':
-                    return new FloorElement(this)
+                    return new FloorElement(this, AABB.from(e.aabb))
+                case 'VerticalWallElement':
+                    return new VerticalWallElement(this, AABB.from(e.aabb))
+                case 'PlatformElement':
+                    return new PlatformElement(this, AABB.from(e.aabb))
+                case 'BrokenPlatformElement':
+                    return new BrokenPlatformElement(this, AABB.from(e.aabb), e.breakDelay, e.lastWalk, e.broken)
+                case 'MovingPlatformElement':
+                    return new MovingPlatformElement(this, AABB.from(e.from), AABB.from(e.to), e.transitionDuration, e.creationTime)
+                case 'MovingKillPlatformElement':
+                    return new MovingKillPlatformElement(this, AABB.from(e.from), AABB.from(e.to), e.transitionDuration, e.creationTime)
                 default:
                     throw new Error(`Unknown element type: ${e.type}`)
             }

@@ -26,8 +26,14 @@ export default class Game extends NJSGame {
         this.world.init()
     }
 
+    killPlayer() {
+        alert("You died")
+        //todo
+    }
+
     tick(playerInputs: Map<NetplayPlayer, DefaultInput>) {
         this.canvas.tick()
+        this.world.tick()
         for (const [player, input] of playerInputs.entries())
             if(this.world.getPlayerToPlay(this.player) === player.getID())
                 this.player.tick(input)

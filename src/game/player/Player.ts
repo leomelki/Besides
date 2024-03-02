@@ -85,12 +85,16 @@ export default class Player {
             this.onGround = false
         }
     }
+
+    public getAABB() {
+        return new AABB(this.x - .3, this.y, .6, 1.8)
+    }
 	readonly aaCollisionBox = new AABB(-.3, 0, .6, 1.8);
     
 	private move(x: number, y: number) {
 		let prevX = x, prevY = y;
 
-        let newRealCooBox = new AABB(this.x - .3, this.y, .6, 1.8).move(x, y);
+        let newRealCooBox = this.getAABB().move(x, y);
         let list1 = this.world.getCollisionBoxes(newRealCooBox);
         for (let collisionBox of list1)
             collisionBox.offset(-this.x, -this.y);
