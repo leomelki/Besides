@@ -21,7 +21,7 @@ export default class Player {
 
     draw(canvas: Canvas) {
         canvas.ctx.fillStyle = "red"
-        canvas.ctx.fillRect(...canvas.convertBoth(this.x - .3, this.y, .6, 1.8))
+        canvas.ctx.fillRect(...canvas.convertBothInterpolate(this.lastX - .3, this.lastY, this.x - .3, this.y, 0.6, 1.8))
     }
     
     tick(control: DefaultInput) {
@@ -74,7 +74,7 @@ export default class Player {
 
 		this.motionY -= 0.08;
 		this.motionY *= 0.98;
-
+        
 		let friction = this.onGround ? 0.546 : 0.91;
 		this.motionX *= friction;
     }

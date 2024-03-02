@@ -1,3 +1,5 @@
+import FloatUtils from "./FloatUtils"
+
 export default class AABB {
     constructor(
         public x: number,
@@ -5,6 +7,11 @@ export default class AABB {
         public width: number,
         public height: number
     ) { }
+
+    newHeight(height: number) {
+        this.height = height
+        return this
+    }
 
     intersects(other: AABB) {
         return this.x < other.x + other.width &&
@@ -24,21 +31,43 @@ export default class AABB {
         return new AABB(this.x, this.y, this.width, this.height)
     }
 
-    computeOffsetY(other: AABB, y: number) {
-        if (y > 0 && this.y + this.height <= other.y)
-            return Math.min(other.y - this.y - this.height, y)
-        else if (y < 0 && this.y >= other.y + other.height)
-            return Math.max(other.y + other.height - this.y, y)
-        return y
+    get minX() {
+        return this.x
     }
 
-    computeOffsetX(other: AABB, x: number) {
-        if (x > 0 && this.x + this.width <= other.x)
-            return Math.min(other.x - this.x - this.width, x)
-        else if (x < 0 && this.x >= other.x + other.width)
-            return Math.max(other.x + other.width - this.x, x)
-        return x
+    get minY() {
+        return this.y
     }
+
+    get maxX() {
+        return this.x + this.width
+    }
+
+    get maxY() {
+        return this.y + this.height
+    }
+
+    computeOffsetX(other: AABB, offsetX: number) {
+      if (other.maxY > this.minY && other.minY < this.maxY) {
+         if (offsetX > 0.0 && FloatUtils.isInferiorOrEquals(other.maxX, this.minX)) {
+            offsetX = Math.min(this.minX - other.maxX, offsetX)
+         } else if (offsetX < 0.0 && FloatUtils.isSuperiorOrEquals(other.minX, this.maxX)) {
+            offsetX = Math.max(this.maxX - other.minX, offsetX)
+         }
+      }
+      return offsetX
+    }
+
+   computeOffsetY(other: AABB, offsetY: number) {
+    if (other.maxX > this.minX && other.minX < this.maxX) {
+       if (offsetY > 0.0 && FloatUtils.isInferiorOrEquals(other.maxY, this.minY)) {
+          offsetY = Math.min(this.minY - other.maxY, offsetY)
+       } else if (offsetY < 0.0 && FloatUtils.isSuperiorOrEquals(other.minY, this.maxY)) {
+          offsetY = Math.max(this.maxY - other.minY, offsetY)
+       }
+    }
+    return offsetY
+ }
 
     offset(x: number, y: number) {
         this.x += x

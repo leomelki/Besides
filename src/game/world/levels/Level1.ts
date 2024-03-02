@@ -18,6 +18,11 @@ export default class Level1 extends World {
         this.elements.push(new FloorElement(this))
     }
 
+    draw(canvas: Canvas): void {
+        canvas.ctx.drawImage(canvas.getImage('background.jpg'), 0, 0, canvas.canvas.width, canvas.canvas.height)
+        super.draw(canvas)
+    }
+
     tick() {
     }
 

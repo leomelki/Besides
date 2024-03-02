@@ -1,10 +1,12 @@
-import { DefaultInput, JsonObject, Game as NJSGame, NetplayPlayer } from 'netplayjs'
+import { DefaultInput, Game as NJSGame, NetplayPlayer } from 'netplayjs'
 
 import Player from './player/Player'
 import Canvas from './utils/Canvas'
 import Level1 from './world/levels/Level1'
 
 export default class Game extends NJSGame {
+
+    deterministic = false
 
     static timestep = 1000 / 20
     static canvasSize = { width: 600, height: 300 }
@@ -14,7 +16,7 @@ export default class Game extends NJSGame {
         return this._partialTick
     }
 
-    canvas = new Canvas(undefined!, undefined!, 60, 30)
+    canvas = new Canvas(undefined!, undefined!, this)
 
     world = new Level1(this)
     player = new Player(this.world)
@@ -25,6 +27,7 @@ export default class Game extends NJSGame {
     }
 
     tick(playerInputs: Map<NetplayPlayer, DefaultInput>) {
+        this.canvas.tick()
         for (const [player, input] of playerInputs.entries())
             if(this.world.getPlayerToPlay(this.player) === player.getID())
                 this.player.tick(input)

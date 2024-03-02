@@ -9,6 +9,8 @@ export default abstract class World {
     elements: Element[] = []
     constructor(
         protected game: Game,
+        public height: number = 30,
+        public width: number = 60,
     ) { }
 
     abstract get name(): string
@@ -43,7 +45,7 @@ export default abstract class World {
      * @returns The bounding boxes of the elements that collide with the given bounding box
      */
     getCollisionBoxes(aabb: AABB): AABB[] {
-        return this.elements.map(e => e.getAABB()).filter(e => e.intersects(aabb))
+        return this.elements.map(e => e.getAABB()).filter(e => e.intersects(aabb)).map(e => e.copy())
     }
 
     /**
