@@ -19,6 +19,14 @@ export default class AABB {
         return this
     }
 
+    expandPercentage(percentX: number, percentY: number) {
+        this.x -= this.width * percentX
+        this.y -= this.height * percentY
+        this.width *= 1 + percentX * 2
+        this.height *= 1 + percentY * 2
+        return this
+    }
+
     intersects(other: AABB) {
         return this.x < other.x + other.width &&
             this.x + this.width > other.x &&

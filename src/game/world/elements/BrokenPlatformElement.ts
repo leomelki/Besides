@@ -42,13 +42,14 @@ export default class BrokenPlatformElement extends Element {
         } else
             this._lastWalk = 0
 
-        if(this.getStade() == 4)
+        if(this.getStade() == 3)
             this._broken = true
     }
 
     draw(canvas: Canvas) {
         if(this.getStade() != 4)
-            canvas.ctx.drawImage(canvas.getImage(`brokenplat${this.getStade()}.svg`), ...canvas.convertAABB(this._aabb.copy().newHeight(this._aabb.height / .7)))
+
+            canvas.ctx.drawImage(canvas.getImage(`brokenplat${this.getStade()}.svg`), ...canvas.convertAABB(this.getStade() == 3 ? this._aabb.copy().newHeight(this._aabb.height / .7) : this._aabb.copy().newHeight(this._aabb.height / .7).expandPercentage(11.47/176.22, 8.52/153.28)))
     }
     
     serialize() {
