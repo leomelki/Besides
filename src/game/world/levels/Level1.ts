@@ -30,7 +30,7 @@ export default class Level1 extends World {
         return false
     }
 
-    getPlayerToPlay(player: Player): 1 | 2 {
-        return 1
+    getPlayerToPlay(player: Player) {
+        return player.x < this.width / 2 ? 0 : 1
     }
 }

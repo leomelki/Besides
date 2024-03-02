@@ -52,7 +52,7 @@ export default abstract class World {
      * @param player The player to check
      * @returns The player that should play
      */
-    abstract getPlayerToPlay(player: Player): 1 | 2
+    abstract getPlayerToPlay(player: Player): 0 | 1
 
     serialize() {
         return {
