@@ -7,7 +7,17 @@ export default class Canvas {
         public ctx: CanvasRenderingContext2D,
         protected game: Game,
         protected tickDuration: number = 1000 / 20
-    ) { }
+    ) {
+        for(let i = 0; i < 15;i++) {
+            this.getImage(`player/walk/${i}.png`)
+            this.getImage(`player/jump/${i}.png`)
+            this.getImage(`player/idle/${i}.png`)
+        }
+        this.getImage(`brokenplat0.svg`)
+        this.getImage(`brokenplat1.svg`)
+        this.getImage(`brokenplat2.svg`)
+        this.getImage(`brokenplat3.svg`)
+    }
 
     lastTick = 0
 
