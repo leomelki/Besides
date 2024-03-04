@@ -4,6 +4,10 @@ import World from "../World";
 import Element from "./Element";
 
 export default class BrokenPlatformElement extends Element {
+    reset() {
+        this._broken = false
+        this._lastWalk = 0
+    }
     constructor(
         world: World,
         protected _aabb: AABB,
@@ -29,16 +33,12 @@ export default class BrokenPlatformElement extends Element {
     }
 
     tick() {
-        console.log('ticking ', this._broken)
         if (this._broken) return
-
-        console.log('tick')
 
         const player = this.world.game.player
         if (player && this.getAABB().intersects(player.getAABB().offset(0, -0.1))) {
             if(!this._lastWalk)
                 this._lastWalk = Date.now()
-            console.log('intersect', this.getStade())
         } else
             this._lastWalk = 0
 

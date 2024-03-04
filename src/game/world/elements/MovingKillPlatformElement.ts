@@ -34,7 +34,7 @@ export default class MovingKillPlatformElement extends Element {
     }
     draw(canvas: Canvas) {
         const aabb = this.getAABB()
-        canvas.ctx.drawImage(canvas.getImage('movingkillplat.svg'), ...canvas.convertAABB(aabb.copy().newHeight(aabb.height / .7)))
+        canvas.ctx.drawImage(canvas.getImage('movingkillwall.svg'), ...canvas.convertAABB(aabb.copy().newHeight(aabb.height / .7)))
     }
     
     serialize() {
