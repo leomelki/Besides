@@ -2,6 +2,7 @@ import { DefaultInput } from "netplayjs"
 import World from "../world/World"
 import AABB from "../utils/AABB"
 import Canvas from "../utils/Canvas"
+import AnimatedSpriteRenderer from "./render/AnimatedSpriteRenderer"
 
 export default class Player {
     lastX: number = 0
@@ -14,6 +15,11 @@ export default class Player {
     motionY: number = 0
 
     onGround: boolean = false
+    animation = new AnimatedSpriteRenderer("player/idle")
+
+    walking = false
+
+    flipped = false
     
     constructor(
         protected world: World,
@@ -21,13 +27,41 @@ export default class Player {
 
     draw(canvas: Canvas) {
         canvas.ctx.fillStyle = "red"
-        canvas.ctx.fillRect(...canvas.convertBothInterpolate(this.lastX - .3, this.lastY, this.x - .3, this.y, 0.6, 1.8))
+        canvas.ctx.save()
+        if(this.world.getPlayerToPlay(this) == this.world.game.localPlayer?.getID()) {
+            canvas.ctx.globalAlpha = 0.4
+        }
+        if(this.flipped) {
+            canvas.ctx.scale(-1, 1)
+            const posSize = canvas.convertBothInterpolate(this.lastX - .3, this.lastY - 0.2, this.x - .3, this.y - 0.2, 2, 2)
+            const img = canvas.getImage(this.animation.getSprite(canvas.partialTick))
+            canvas.ctx.drawImage(img, -posSize[0] - posSize[2]/2, posSize[1], posSize[2], posSize[3])
+        }else 
+            canvas.ctx.drawImage(canvas.getImage(this.animation.getSprite(canvas.partialTick)), ...canvas.convertBothInterpolate(this.lastX - .3, this.lastY - 0.2, this.x - .3, this.y - 0.2, 2, 2))
+        canvas.ctx.restore()
+    }
+
+    private _getAnimName() {
+        if(!this.onGround)
+            return "player/jump"
+        return this.walking ? "player/run" : "player/idle"
     }
     
     tick(control: DefaultInput) {
         const vel = control.arrowKeys()
+
+        if(vel.x != 0)
+            this.flipped = vel.x < 0
+
+        this.animation.tick()
         
         this.tickPosition(vel.x, vel.y)
+
+        this.walking = !!vel.x
+
+        const anim = this._getAnimName()
+        if(anim != this.animation.fileName)
+            this.animation = new AnimatedSpriteRenderer(anim, 15, anim == "player/jump" ? 19 : 8)
     }
 
 	/**
@@ -49,7 +83,7 @@ export default class Player {
 		if (distance > 1.0E-4) {
 			distance = friction / Math.max(1, Math.sqrt(distance))
 
-			forward *= distance
+			forward *= distance * 1.3
 
 			this.motionX += forward
 		}
@@ -81,15 +115,15 @@ export default class Player {
 
     private jump() {
         if (this.onGround) {
-            this.motionY = 0.42
+            this.motionY = 0.9
             this.onGround = false
         }
     }
 
     public getAABB() {
-        return new AABB(this.x - .3, this.y, .6, 1.8)
+        return new AABB(this.x - .3, this.y, .6, 1.6)
     }
-	readonly aaCollisionBox = new AABB(-.3, 0, .6, 1.8);
+	readonly aaCollisionBox = new AABB(-.3, 0, .6, 1.6);
     
 	private move(x: number, y: number) {
 		let prevX = x, prevY = y;
@@ -124,6 +158,10 @@ export default class Player {
 
 		if (finishedFalling) {
 			this.motionY = 0;
+
+            if(!this.onGround)
+                this.animation = new AnimatedSpriteRenderer("player/idle")
+
 			this.onGround = true;
 		} else if(prevY != 0)
 			this.onGround = false;
