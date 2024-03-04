@@ -7,6 +7,7 @@ import BrokenPlatformElement from "../elements/BrokenPlatformElement"
 import FloorElement from "../elements/FloorElement"
 import MovingPlatformElement from "../elements/MovingPlatformElement"
 import PlatformElement from "../elements/PlatformElement"
+import SpawnElement from "../elements/SpawnElement"
 
 export default class Level1 extends World {
 
@@ -14,8 +15,10 @@ export default class Level1 extends World {
         return "Level 1"
     }
 
-    constructor(game: Game) {
-        super(game)
+    constructor(
+        game: Game
+    ) {
+        super(game, 18, 32)
     }
 
     init() {
@@ -23,6 +26,9 @@ export default class Level1 extends World {
         this.elements.push(new PlatformElement(this, new AABB(20, 2.3, 10, 1)))
         this.elements.push(new BrokenPlatformElement(this, new AABB(30, 2.6, 10, 1)))
         this.elements.push(new MovingPlatformElement(this, new AABB(10, 2, 10, 1), new AABB(19, 2, 10, 1)))
+
+        this.elements.push(new SpawnElement(this, new AABB(5, 10, 1, 5)))
+        super.init()
     }
 
     draw(canvas: Canvas): void {
