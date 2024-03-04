@@ -93,6 +93,14 @@ export default abstract class World {
         }
     }
 
+    /**
+     * Deserialize the world
+     * 
+     * Note: This is used to sync the game state with the other player
+     *       All elements should be deserialized here
+     * 
+     * @param json The json to deserialize 
+     */
     deserialize(json: any) {
         this.hasKey = json.hasKey
         this.elements = json.elements.map((e: any) => {

@@ -28,6 +28,11 @@ export default class Game extends NJSGame {
         this.world.init()
     }
 
+    /**
+     * Called when the player dies
+     * 
+     * Resets the world and teleport the player back to the start
+    */
     killPlayer() {
         this.world.hasKey = false
         this.player.x = this.world.start[0]
@@ -36,7 +41,6 @@ export default class Game extends NJSGame {
         for(let element of this.world.elements)
             if(element instanceof BrokenPlatformElement)
                 element.reset()
-        //todo
     }
 
     localPlayer!: NetplayPlayer
@@ -55,7 +59,6 @@ export default class Game extends NJSGame {
     }
 
     draw(canvas: HTMLCanvasElement) {
-        //ON VOIT TOUJOURS SON PERSO, MEME DANS LA PARTIE AU ON CONTROLE, ON VOIT JUSTE PAS LA MAP
         const ctx = canvas.getContext("2d")!
         this.canvas.updateCanvas(canvas, ctx)
 
@@ -73,6 +76,11 @@ export default class Game extends NJSGame {
         }
     }
 
+    /**
+     * Called when the player wins
+     * 
+     * Should display an end screen
+     */
     win() {
         document.write('You win!')
     }
@@ -88,6 +96,13 @@ export default class Game extends NJSGame {
         
         this.player.deserialize(value.player)
     }
+
+    /**
+     * Create a new world based on the world's name
+     * @param name World name
+     * @param game Game instance
+     * @returns 
+     */
     static createWorld(name: string, game: Game) {
         switch (name) {
             case 'Level 2':

@@ -71,11 +71,6 @@ export default class Player {
 	private updateMovements(forward: number) {
 		forward *= 0.98
 
-		// if (_sneaking) {
-		// 	forward *= 0.3
-		// 	strafe *= 0.3
-		// }
-
 		let f4 = this.onGround ? 0.54600006 : 0.91
 		let friction = this.onGround ? 0.09999999 * 0.16277136 / (f4 * f4 * f4) : 0.02
 		let distance = forward * forward
