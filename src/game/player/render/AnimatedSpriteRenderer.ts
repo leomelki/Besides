@@ -15,4 +15,14 @@ export default class AnimatedSpriteRenderer {
         const sprite = Math.floor((this._currTick + partial) / this._animTickDuration * this._animSize) % this._animSize
         return `${this.fileName}/${sprite}.png`
     }
+
+    public serialize() {
+        return {
+            currTick: this._currTick,
+        }
+    }
+
+    public deserialize(data: any) {
+        this._currTick = data.currTick
+    }
 }

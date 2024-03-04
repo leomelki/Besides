@@ -170,7 +170,8 @@ export default class Player {
             y: this.y,
             motionX: this.motionX,
             motionY: this.motionY,
-            onGround: this.onGround
+            onGround: this.onGround,
+            animation: this.animation.serialize(),
         }
     }
 
@@ -182,5 +183,6 @@ export default class Player {
         this.motionX = json.motionX
         this.motionY = json.motionY
         this.onGround = json.onGround
+        this.animation.deserialize(json.animation)
     }
 }
