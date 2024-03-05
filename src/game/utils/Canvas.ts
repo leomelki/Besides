@@ -9,7 +9,7 @@ export default class Canvas {
         protected tickDuration: number = 1000 / 20
     ) {
         for(let i = 0; i < 15;i++) {
-            this.getImage(`player/walk/${i}.png`)
+            this.getImage(`player/run/${i}.png`)
             this.getImage(`player/jump/${i}.png`)
             this.getImage(`player/idle/${i}.png`)
         }
