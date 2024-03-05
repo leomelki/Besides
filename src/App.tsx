@@ -1,12 +1,12 @@
 import './App.css';
 import Game from './game/Game';
 
-import { RollbackWrapper } from 'netplayjs';
+import { LockstepWrapper } from 'netplayjs';
 import MainMenu from './game/menus/MainMenu';
 
 //@ts-ignore
 if(!window.wrapper) {
-  const wrapper = new RollbackWrapper(Game)
+  const wrapper = new LockstepWrapper(Game)
   //@ts-ignore
   window.wrapper = wrapper;
   wrapper.start();
