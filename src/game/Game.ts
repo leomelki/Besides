@@ -21,7 +21,7 @@ export default class Game extends NJSGame {
     canvas = new Canvas(undefined!, undefined!, this)
 
     world = new Level2(this)
-    player = new Player(this.world)
+    player = new Player(this)
 
     constructor() {
         super()
