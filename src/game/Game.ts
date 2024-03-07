@@ -38,7 +38,7 @@ export default class Game extends NJSGame {
         this.player.x = this.world.start[0]
         this.player.y = this.world.start[1]
 
-        for(let element of this.world.elements)
+        for(const element of this.world.elements)
             if(element instanceof BrokenPlatformElement)
                 element.reset()
     }

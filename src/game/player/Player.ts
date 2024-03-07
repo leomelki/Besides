@@ -1,8 +1,9 @@
-import { DefaultInput } from "netplayjs"
+import { DefaultInput, JsonValue } from "netplayjs"
 import World from "../world/World"
 import AABB from "../utils/AABB"
 import Canvas from "../utils/Canvas"
 import AnimatedSpriteRenderer from "./render/AnimatedSpriteRenderer"
+import Game from "../Game"
 
 export default class Player {
     lastX: number = 0
@@ -22,8 +23,12 @@ export default class Player {
     flipped = false
     
     constructor(
-        protected world: World,
+        protected game: Game,
     ) { }
+
+    get world() {
+        return this.game.world
+    }
 
     draw(canvas: Canvas) {
         canvas.ctx.fillStyle = "red"
@@ -71,8 +76,8 @@ export default class Player {
 	private updateMovements(forward: number) {
 		forward *= 0.98
 
-		let f4 = this.onGround ? 0.54600006 : 0.91
-		let friction = this.onGround ? 0.09999999 * 0.16277136 / (f4 * f4 * f4) : 0.02
+		const fr = this.onGround ? 0.546 : 0.91
+		const friction = this.onGround ? 0.099 * 0.163 / (fr * fr * fr) : 0.02
 		let distance = forward * forward
 
 		if (distance > 1.0E-4) {
@@ -104,7 +109,7 @@ export default class Player {
 		this.motionY -= 0.08;
 		this.motionY *= 0.98;
         
-		let friction = this.onGround ? 0.546 : 0.91;
+		const friction = this.onGround ? 0.546 : 0.91;
 		this.motionX *= friction;
     }
 
@@ -121,21 +126,21 @@ export default class Player {
 	readonly aaCollisionBox = new AABB(-.3, 0, .6, 1.6);
     
 	private move(x: number, y: number) {
-		let prevX = x, prevY = y;
+		const prevX = x, prevY = y;
 
-        let newRealCooBox = this.getAABB().move(x, y);
-        let list1 = this.world.getCollisionBoxes(newRealCooBox);
-        for (let collisionBox of list1)
+        const newRealCooBox = this.getAABB().move(x, y);
+        const list1 = this.world.getCollisionBoxes(newRealCooBox);
+        for (const collisionBox of list1)
             collisionBox.offset(-this.x, -this.y);
 
-        let box = this.aaCollisionBox.copy();
+        const box = this.aaCollisionBox.copy();
 
-        for (let collisionBox of list1)
+        for (const collisionBox of list1)
             y = collisionBox.computeOffsetY(box, y);
 
         box.offset(0, y);
 
-        for(let collisionBox of list1)
+        for(const collisionBox of list1)
             x = collisionBox.computeOffsetX(box, x);
 
         box.offset(x, 0);
@@ -149,7 +154,7 @@ export default class Player {
 		this.x += x;
 		this.y += y;
 
-		let finishedFalling = prevY !== y && prevY < 0;
+		const finishedFalling = prevY !== y && prevY < 0;
 
 		if (finishedFalling) {
 			this.motionY = 0;
@@ -162,7 +167,7 @@ export default class Player {
 			this.onGround = false;
     }
 
-    serialize(): any {  
+    serialize(): JsonValue {  
         return {
             lastX: this.lastX,
             lastY: this.lastY,

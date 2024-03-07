@@ -101,9 +101,9 @@ export default abstract class World {
      * 
      * @param json The json to deserialize 
      */
-    deserialize(json: any) {
+    deserialize(json: {hasKey: boolean, elements: any[]}) {
         this.hasKey = json.hasKey
-        this.elements = json.elements.map((e: any) => {
+        this.elements = json.elements.map(e => {
             switch (e.type) {
                 case 'FloorElement':
                     return new FloorElement(this, AABB.from(e.aabb))

@@ -1,3 +1,4 @@
+import { JsonValue } from "netplayjs";
 import AABB from "../../utils/AABB";
 import Canvas from "../../utils/Canvas";
 import World from "../World";
@@ -34,5 +35,5 @@ export default abstract class Element {
      * 
      * @returns The serialized element
      */
-    abstract serialize(): any
+    abstract serialize(): JsonValue
 }
