@@ -1,5 +1,4 @@
 import { DefaultInput, JsonValue } from "netplayjs"
-import World from "../world/World"
 import AABB from "../utils/AABB"
 import Canvas from "../utils/Canvas"
 import AnimatedSpriteRenderer from "./render/AnimatedSpriteRenderer"
